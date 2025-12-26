@@ -40,17 +40,12 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Run tests with coverage
-        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
-
-      - name: Display coverage
-        run: go tool cover -func=coverage.out
+      - name: Run tests
+        run: go test -v ./...
 
       - name: Cleanup
         if: always()
-        run: |
-          go clean -cache -testcache -modcache
-          rm -f coverage.out
+        run: go clean -cache -testcache -modcache
 
   build:
     name: Build

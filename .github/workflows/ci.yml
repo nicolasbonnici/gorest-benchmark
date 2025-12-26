@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  push:
-    branches: ['**']
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 jobs:
@@ -50,3 +50,24 @@ jobs:
         run: |
           go clean -cache -testcache -modcache
           rm -f coverage.out
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [lint, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Build verification
+        run: go build -v ./...
+
+      - name: Cleanup
+        if: always()
+        run: go clean -cache -testcache -modcache

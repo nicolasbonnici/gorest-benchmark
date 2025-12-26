@@ -1,0 +1,14 @@
+issues:
+  exclude-rules:
+    - path: generated/
+      linters:
+        - goanalysis_metalinter
+        - typecheck
+        - errcheck
+        - staticcheck
+        - unused
+        - gosimple
+        - ineffassign
+    - path: generated/.*\.go
+      linters:
+        - all

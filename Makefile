@@ -18,11 +18,11 @@ test: ## Run tests
 
 lint: ## Run linter
 	@echo "Running golangci-lint..."
-	@golangci-lint run ./...
+	@$$(go env GOPATH)/bin/golangci-lint run ./...
 
 lint-fix: ## Run linter with auto-fix
 	@echo "Running golangci-lint with auto-fix..."
-	@golangci-lint run --fix ./...
+	@$$(go env GOPATH)/bin/golangci-lint run --fix ./...
 
 build: ## Build the benchmark command
 	@echo "Building benchmark command..."

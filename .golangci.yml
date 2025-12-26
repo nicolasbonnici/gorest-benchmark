@@ -1,16 +1,6 @@
 version: "2"
 
-issues:
-  exclude-rules:
-    - path: generated/
-      linters:
-        - goanalysis_metalinter
-        - typecheck
-        - errcheck
-        - staticcheck
-        - unused
-        - gosimple
-        - ineffassign
-    - path: generated/.*\.go
-      linters:
-        - all
+linters:
+  exclusions:
+    paths:
+      - "generated/.*"

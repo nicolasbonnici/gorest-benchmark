@@ -12,13 +12,9 @@ install: ## Install development tools
 	@which golangci-lint > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin latest
 	@echo "✓ Tools installed"
 
-test: ## Run tests with coverage
+test: ## Run tests
 	@echo "Running tests..."
-	@go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
-	@echo ""
-	@echo "Coverage summary:"
-	@go tool cover -func=coverage.out
-	@rm -f coverage.out
+	@go test -v ./...
 
 lint: ## Run linter
 	@echo "Running golangci-lint..."

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/nicolasbonnici/gorest"
 	"github.com/nicolasbonnici/gorest/pluginloader"
-	"github.com/nicolasbonnici/gorest/test/generated/resources"
+	"github.com/nicolasbonnici/gorest-benchmark/generated/resources"
 
 	authplugin "github.com/nicolasbonnici/gorest-auth"
 	statusplugin "github.com/nicolasbonnici/gorest-status"

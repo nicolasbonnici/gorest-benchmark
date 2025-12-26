@@ -98,7 +98,7 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		ctx.ProgressCallback("Setting up benchmark table...")
 	}
 
-	db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
+	_, _ = db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
 	_, err := db.Exec(dbCtx, `
 		CREATE TABLE benchmark_items (
 			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -193,8 +193,8 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		}
 	}
 	defer func() {
-		serverCmd.Process.Kill()
-		serverCmd.Wait()
+		_ = serverCmd.Process.Kill()
+		_ = serverCmd.Wait()
 	}()
 
 	// Wait for server to be ready
@@ -240,12 +240,13 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		URL:    "http://localhost:3001/benchmarkitems?limit=1",
 	}
 	attacker := vegeta.NewAttacker()
-	for res := range attacker.Attack(vegeta.NewStaticTargeter(target), vegeta.Rate{Freq: 1, Per: time.Second}, 1*time.Second, "Endpoint Check") {
-		if res.Code != 200 {
-			fmt.Printf("WARNING: Endpoint check failed with status %d\n", res.Code)
-			time.Sleep(2 * time.Second)
-		}
-		break
+	resChan := attacker.Attack(vegeta.NewStaticTargeter(target), vegeta.Rate{Freq: 1, Per: time.Second}, 1*time.Second, "Endpoint Check")
+	if res := <-resChan; res.Code != 200 {
+		fmt.Printf("WARNING: Endpoint check failed with status %d\n", res.Code)
+		time.Sleep(2 * time.Second)
+	}
+	// Drain the channel
+	for range resChan {
 	}
 
 	// Run benchmarks
@@ -305,7 +306,7 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		ctx.ProgressCallback("Cleaning up...")
 	}
 
-	db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
+	_, _ = db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
 
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Restoring original schema...")
@@ -314,12 +315,12 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	cmd = exec.Command("make", "test-schema")
 	cmd.Stdout = nil
 	cmd.Stderr = nil
-	cmd.Run()
+	_ = cmd.Run()
 
 	cmd = exec.Command("make", "test-generate")
 	cmd.Stdout = nil
 	cmd.Stderr = nil
-	cmd.Run()
+	_ = cmd.Run()
 
 	fmt.Println()
 	fmt.Println("=========================================")

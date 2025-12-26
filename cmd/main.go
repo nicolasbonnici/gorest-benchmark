@@ -28,7 +28,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Database connection failed: %v\n", err)
 		os.Exit(1)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	// Load benchmark plugin via auto-discovery
 	plugins, err := pluginloader.LoadAllCommandPlugins(db, cfg)

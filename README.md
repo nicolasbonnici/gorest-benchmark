@@ -1,5 +1,9 @@
 # GoREST Benchmark Plugin
 
+[![CI](https://github.com/nicolasbonnici/gorest-benchmark/actions/workflows/ci.yml/badge.svg)](https://github.com/nicolasbonnici/gorest-benchmark/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nicolasbonnici/gorest-benchmark)](https://goreportcard.com/report/github.com/nicolasbonnici/gorest-benchmark)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 API performance benchmarking plugin for GoREST framework.
 
 ## Installation

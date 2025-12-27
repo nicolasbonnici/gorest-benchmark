@@ -86,18 +86,64 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		}
 	}
 
-	dbCtx := context.Background()
-
 	fmt.Println("=========================================")
 	fmt.Println("      API Performance Benchmark")
 	fmt.Println("=========================================")
 	fmt.Println()
 
 	// Setup benchmark table
+	if result := c.setupBenchmarkTable(ctx, db); result != nil {
+		return result
+	}
+
+	// Generate test data
+	counts := []int{10, 100, 1000}
+	if result := c.generateTestData(ctx, db, counts); result != nil {
+		return result
+	}
+
+	// Generate models and resources
+	c.generateModelsAndResources(ctx)
+
+	// Build and start server
+	serverCmd, result := c.buildAndStartServer(ctx, dbURL)
+	if result != nil {
+		return result
+	}
+	defer func() {
+		_ = serverCmd.Process.Kill()
+		_ = serverCmd.Wait()
+	}()
+
+	// Wait for server and verify endpoint
+	if result := c.waitForServerReady(ctx); result != nil {
+		return result
+	}
+	c.verifyEndpoint()
+
+	// Run benchmarks
+	c.runBenchmarkTests(counts)
+
+	// Cleanup
+	c.cleanup(ctx, db)
+
+	fmt.Println()
+	fmt.Println("=========================================")
+	fmt.Println("       Benchmark Complete")
+	fmt.Println("=========================================")
+
+	return &plugin.CommandResult{
+		Success: true,
+		Message: "Benchmark completed successfully",
+	}
+}
+
+func (c *BenchmarkCommand) setupBenchmarkTable(ctx *plugin.CommandContext, db database.Database) *plugin.CommandResult {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Setting up benchmark table...")
 	}
 
+	dbCtx := context.Background()
 	_, _ = db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
 	_, err := db.Exec(dbCtx, `
 		CREATE TABLE benchmark_items (
@@ -115,13 +161,15 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 			Message: "Failed to create benchmark table",
 		}
 	}
+	return nil
+}
 
-	// Generate test data
+func (c *BenchmarkCommand) generateTestData(ctx *plugin.CommandContext, db database.Database, counts []int) *plugin.CommandResult {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Generating test data...")
 	}
 
-	counts := []int{10, 100, 1000}
+	dbCtx := context.Background()
 	maxCount := counts[len(counts)-1]
 
 	for i := 1; i <= maxCount; i++ {
@@ -139,8 +187,10 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 			}
 		}
 	}
+	return nil
+}
 
-	// Generate models and resources using generator library
+func (c *BenchmarkCommand) generateModelsAndResources(ctx *plugin.CommandContext) {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Generating models and resources...")
 	}
@@ -150,8 +200,9 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 
 	authCfg := codegen.DefaultAuthConfig()
 	codegen.GenerateAPI(authCfg)
+}
 
-	// Build and start API server
+func (c *BenchmarkCommand) buildAndStartServer(ctx *plugin.CommandContext, dbURL string) (*exec.Cmd, *plugin.CommandResult) {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Building API server...")
 	}
@@ -160,7 +211,7 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	if err := cmd.Run(); err != nil {
-		return &plugin.CommandResult{
+		return nil, &plugin.CommandResult{
 			Success: false,
 			Error:   err,
 			Message: "Failed to build benchmark server",
@@ -186,18 +237,17 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	serverCmd.Stderr = nil
 
 	if err := serverCmd.Start(); err != nil {
-		return &plugin.CommandResult{
+		return nil, &plugin.CommandResult{
 			Success: false,
 			Error:   err,
 			Message: "Failed to start server",
 		}
 	}
-	defer func() {
-		_ = serverCmd.Process.Kill()
-		_ = serverCmd.Wait()
-	}()
 
-	// Wait for server to be ready
+	return serverCmd, nil
+}
+
+func (c *BenchmarkCommand) waitForServerReady(ctx *plugin.CommandContext) *plugin.CommandResult {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Waiting for server to be ready...")
 	}
@@ -233,8 +283,10 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	}
 
 	time.Sleep(2 * time.Second)
+	return nil
+}
 
-	// Verify endpoint
+func (c *BenchmarkCommand) verifyEndpoint() {
 	target := vegeta.Target{
 		Method: "GET",
 		URL:    "http://localhost:3001/benchmarkitems?limit=1",
@@ -248,8 +300,9 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	// Drain the channel
 	for range resChan {
 	}
+}
 
-	// Run benchmarks
+func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
 	fmt.Println()
 	fmt.Println("=========================================")
 	fmt.Println("       Running Benchmarks")
@@ -264,55 +317,61 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		fmt.Println("─────────────────────────────────────────────────────────────────")
 
 		for _, concurrency := range concurrencyLevels {
-			url := fmt.Sprintf("http://localhost:3001/benchmarkitems?limit=%d", limit)
-
-			target := vegeta.Target{
-				Method: "GET",
-				URL:    url,
-			}
-			targeter := vegeta.NewStaticTargeter(target)
-			rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
-			attacker := vegeta.NewAttacker()
-
-			var metrics vegeta.Metrics
-			for res := range attacker.Attack(targeter, rate, testDuration, fmt.Sprintf("Load Test (concurrency=%d)", concurrency)) {
-				metrics.Add(res)
-			}
-			metrics.Close()
-
-			fmt.Printf("  Concurrency: %-3d | ", concurrency)
-			fmt.Printf("RPS: %7.0f | ", metrics.Rate)
-			fmt.Printf("p50: %8s | ", metrics.Latencies.P50)
-			fmt.Printf("p95: %8s | ", metrics.Latencies.P95)
-			fmt.Printf("p99: %8s | ", metrics.Latencies.P99)
-
-			if len(metrics.Errors) > 0 {
-				errorRate := float64(len(metrics.Errors)) / float64(metrics.Requests) * 100
-				fmt.Printf("Errors: %.2f%% ", errorRate)
-				for _, err := range metrics.Errors {
-					fmt.Printf("(%s)", err)
-					break
-				}
-			} else {
-				fmt.Printf("Errors: 0")
-			}
-			fmt.Printf(" | Total: %d\n", metrics.Requests)
+			c.runSingleBenchmark(limit, concurrency, testDuration)
 		}
 		fmt.Println()
 	}
+}
 
-	// Cleanup
+func (c *BenchmarkCommand) runSingleBenchmark(limit, concurrency int, testDuration time.Duration) {
+	url := fmt.Sprintf("http://localhost:3001/benchmarkitems?limit=%d", limit)
+
+	target := vegeta.Target{
+		Method: "GET",
+		URL:    url,
+	}
+	targeter := vegeta.NewStaticTargeter(target)
+	rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
+	attacker := vegeta.NewAttacker()
+
+	var metrics vegeta.Metrics
+	for res := range attacker.Attack(targeter, rate, testDuration, fmt.Sprintf("Load Test (concurrency=%d)", concurrency)) {
+		metrics.Add(res)
+	}
+	metrics.Close()
+
+	fmt.Printf("  Concurrency: %-3d | ", concurrency)
+	fmt.Printf("RPS: %7.0f | ", metrics.Rate)
+	fmt.Printf("p50: %8s | ", metrics.Latencies.P50)
+	fmt.Printf("p95: %8s | ", metrics.Latencies.P95)
+	fmt.Printf("p99: %8s | ", metrics.Latencies.P99)
+
+	if len(metrics.Errors) > 0 {
+		errorRate := float64(len(metrics.Errors)) / float64(metrics.Requests) * 100
+		fmt.Printf("Errors: %.2f%% ", errorRate)
+		for _, err := range metrics.Errors {
+			fmt.Printf("(%s)", err)
+			break
+		}
+	} else {
+		fmt.Printf("Errors: 0")
+	}
+	fmt.Printf(" | Total: %d\n", metrics.Requests)
+}
+
+func (c *BenchmarkCommand) cleanup(ctx *plugin.CommandContext, db database.Database) {
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Cleaning up...")
 	}
 
+	dbCtx := context.Background()
 	_, _ = db.Exec(dbCtx, "DROP TABLE IF EXISTS benchmark_items CASCADE")
 
 	if ctx.ProgressCallback != nil {
 		ctx.ProgressCallback("Restoring original schema...")
 	}
 
-	cmd = exec.Command("make", "test-schema")
+	cmd := exec.Command("make", "test-schema")
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	_ = cmd.Run()
@@ -321,14 +380,4 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	_ = cmd.Run()
-
-	fmt.Println()
-	fmt.Println("=========================================")
-	fmt.Println("       Benchmark Complete")
-	fmt.Println("=========================================")
-
-	return &plugin.CommandResult{
-		Success: true,
-		Message: "Benchmark completed successfully",
-	}
 }

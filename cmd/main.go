@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/nicolasbonnici/gorest-benchmark"
 	"github.com/nicolasbonnici/gorest/config"
 	"github.com/nicolasbonnici/gorest/database"
 	_ "github.com/nicolasbonnici/gorest/database/mysql"
@@ -11,7 +12,6 @@ import (
 	_ "github.com/nicolasbonnici/gorest/database/sqlite"
 	"github.com/nicolasbonnici/gorest/plugin"
 	"github.com/nicolasbonnici/gorest/pluginloader"
-	_ "github.com/nicolasbonnici/gorest-benchmark"
 )
 
 func main() {

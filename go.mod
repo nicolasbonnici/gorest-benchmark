@@ -7,7 +7,7 @@ require (
 	github.com/nicolasbonnici/gorest v0.4.3
 	github.com/nicolasbonnici/gorest-auth v0.1.6
 	github.com/nicolasbonnici/gorest-status v0.1.3
-	github.com/tsenart/vegeta/v12 v12.12.0
+	github.com/tsenart/vegeta/v12 v12.13.0
 )
 
 require (
@@ -30,6 +30,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

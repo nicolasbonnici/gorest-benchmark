@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	github.com/gofiber/fiber/v2 v2.52.10
 	github.com/nicolasbonnici/gorest v0.4.3
-	github.com/nicolasbonnici/gorest-auth v0.1.5
+	github.com/nicolasbonnici/gorest-auth v0.1.6
 	github.com/nicolasbonnici/gorest-status v0.1.2
 	github.com/tsenart/vegeta/v12 v12.12.0
 )

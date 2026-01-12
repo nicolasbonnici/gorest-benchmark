@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.10
-	github.com/nicolasbonnici/gorest v0.4.4
+	github.com/nicolasbonnici/gorest v0.4.5
 	github.com/nicolasbonnici/gorest-auth v0.1.6
 	github.com/nicolasbonnici/gorest-status v0.1.4
 	github.com/tsenart/vegeta/v12 v12.13.0
@@ -48,10 +48,10 @@ require (
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/text v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.67.2 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.42.2 // indirect
+	modernc.org/sqlite v1.43.0 // indirect
 )

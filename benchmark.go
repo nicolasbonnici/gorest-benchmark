@@ -10,7 +10,7 @@ import (
 	vegeta "github.com/tsenart/vegeta/v12/lib"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nicolasbonnici/gorest/codegen"
+	"github.com/nicolasbonnici/gorest-codegen/codegen"
 	"github.com/nicolasbonnici/gorest/database"
 	"github.com/nicolasbonnici/gorest/plugin"
 	"github.com/nicolasbonnici/gorest/pluginloader"

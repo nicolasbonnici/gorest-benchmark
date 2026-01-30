@@ -12,6 +12,15 @@ API performance benchmarking plugin for GoREST framework.
 go get github.com/nicolasbonnici/gorest-benchmark
 ```
 
+## Dependencies
+
+This plugin requires the following dependencies:
+
+- **GoREST Framework** (v0.4.8+): Core framework
+- **gorest-codegen**: Code generation plugin for creating models and API resources during benchmarks
+
+The codegen dependency is used internally to generate temporary models and resources for benchmark testing.
+
 ## Usage
 
 ### As a CLI Command

@@ -6,12 +6,8 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.11
 	github.com/nicolasbonnici/gorest v0.4.8
 	github.com/nicolasbonnici/gorest-auth v0.1.6
-<<<<<<< HEAD
+	github.com/nicolasbonnici/gorest-codegen v0.1.0
 	github.com/nicolasbonnici/gorest-status v0.1.5
-=======
-	github.com/nicolasbonnici/gorest-codegen v0.0.0-00010101000000-000000000000
-	github.com/nicolasbonnici/gorest-status v0.1.4
->>>>>>> 2e0f00a (feat: migrate to gorest-codegen plugin)
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
 
@@ -60,5 +56,3 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.44.3 // indirect
 )
-
-replace github.com/nicolasbonnici/gorest-codegen => ../gorest-codegen

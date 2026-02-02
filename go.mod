@@ -3,7 +3,7 @@ module github.com/nicolasbonnici/gorest-benchmark
 go 1.25.1
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.10
+	github.com/gofiber/fiber/v2 v2.52.11
 	github.com/nicolasbonnici/gorest v0.4.8
 	github.com/nicolasbonnici/gorest-auth v0.1.6
 	github.com/nicolasbonnici/gorest-status v0.1.5

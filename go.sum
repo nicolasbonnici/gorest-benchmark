@@ -28,8 +28,8 @@ github.com/go-sql-driver/mysql v1.9.3 h1:U/N249h2WzJ3Ukj8SowVFjdtZKfu9vlLZxjPXV1
 github.com/go-sql-driver/mysql v1.9.3/go.mod h1:qn46aNg1333BRMNU69Lq93t8du/dwxI64Gl8i5p1WMU=
 github.com/gofiber/fiber/v2 v2.52.11 h1:5f4yzKLcBcF8ha1GQTWB+mpblWz3Vz6nSAbTL31HkWs=
 github.com/gofiber/fiber/v2 v2.52.11/go.mod h1:YEcBbO/FB+5M1IZNBP9FO3J9281zgPAreiI1oqg8nDw=
-github.com/golang-jwt/jwt/v5 v5.3.0 h1:pv4AsKCKKZuqlgs5sUmn4x8UlGa0kEVt/puTpKx9vvo=
-github.com/golang-jwt/jwt/v5 v5.3.0/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
+github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
+github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
@@ -71,8 +71,8 @@ github.com/ncruces/go-strftime v1.0.0 h1:HMFp8mLCTPp341M/ZnA4qaf7ZlsbTc+miZjCLOF
 github.com/ncruces/go-strftime v1.0.0/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
 github.com/nicolasbonnici/gorest v0.4.9 h1:LdIRx022WzxthzISyH0fLA1K5HC0+er6ZeQ6P1l2/Ig=
 github.com/nicolasbonnici/gorest v0.4.9/go.mod h1:7ZdOE4drN2uSG7EP8xTzzyHVFFNCVLXOoZp5lMpvgR4=
-github.com/nicolasbonnici/gorest-auth v0.1.6 h1:5jDHsV3qSGRA+9hSeo6pYrI55ASHr10Ns09GrVnJ25U=
-github.com/nicolasbonnici/gorest-auth v0.1.6/go.mod h1:0qWNRGtv0DWYH4zvx0zlSKvQPOqinrOJjCQC2S+IJ+0=
+github.com/nicolasbonnici/gorest-auth v0.1.7 h1:Bu9AuSrdWRxhTbHW4QjSiL1/N76zf8DNoOFlJdSVg2A=
+github.com/nicolasbonnici/gorest-auth v0.1.7/go.mod h1:kty+w1HLZwU7FOvbEWGf9gToYm8kP6hpu2m9pthgYPs=
 github.com/nicolasbonnici/gorest-codegen v0.1.1 h1:IZLQlifySMNn8E5JvvTGxu728TUX0RY+IdKryJWy0zA=
 github.com/nicolasbonnici/gorest-codegen v0.1.1/go.mod h1:GDH8GpYTXXRy5qNqCdI6NVvY5uTZec2fWWQSsqpQdtw=
 github.com/nicolasbonnici/gorest-status v0.1.5 h1:muli4nL2kjFo5IosulxrmPfPIepVI2LvtIk5RTYUbk4=

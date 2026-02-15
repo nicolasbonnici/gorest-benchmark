@@ -1,6 +1,3 @@
-version: "2"
-
-linters:
-  exclusions:
-    paths:
-      - "generated/.*"
+issues:
+  exclude-dirs:
+    - generated

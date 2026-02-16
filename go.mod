@@ -1,12 +1,14 @@
 module github.com/nicolasbonnici/gorest-benchmark
 
-go 1.25.1
+go 1.26
+
+toolchain go1.26.0
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.11
-	github.com/nicolasbonnici/gorest v0.4.9
+	github.com/nicolasbonnici/gorest v0.4.11
 	github.com/nicolasbonnici/gorest-auth v0.1.7
-	github.com/nicolasbonnici/gorest-codegen v0.1.1
+	github.com/nicolasbonnici/gorest-codegen v0.1.2
 	github.com/nicolasbonnici/gorest-status v0.1.5
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -14,7 +16,7 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/andybalholm/brotli v1.2.0 // indirect
-	github.com/clipperhouse/uax29/v2 v2.6.0 // indirect
+	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -53,5 +55,5 @@ require (
 	modernc.org/libc v1.67.7 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.44.3 // indirect
+	modernc.org/sqlite v1.45.0 // indirect
 )

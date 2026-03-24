@@ -8,7 +8,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.12
 	github.com/nicolasbonnici/gorest v0.4.13
 	github.com/nicolasbonnici/gorest-auth v0.1.11
-	github.com/nicolasbonnici/gorest-codegen v0.1.3
+	github.com/nicolasbonnici/gorest-codegen v0.1.4
 	github.com/nicolasbonnici/gorest-status v0.1.7
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -31,7 +31,7 @@ require (
 	github.com/jackc/pgx/v5 v5.8.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/klauspost/compress v1.18.4 // indirect
+	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.9.2 // indirect

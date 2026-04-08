@@ -75,8 +75,8 @@ github.com/nicolasbonnici/gorest-auth v0.1.11 h1:lm7VKZcZ+pX6yDuz0mnwXbY98NRc3nv
 github.com/nicolasbonnici/gorest-auth v0.1.11/go.mod h1:VAieEPf0A74p+efhGXlwH9wdQ3cbzMZle2MSy+gmAQM=
 github.com/nicolasbonnici/gorest-codegen v0.1.7 h1:px4sE79/p95BxKMM7juO2wU5fgKxuA/Ajc+vKHEsV6k=
 github.com/nicolasbonnici/gorest-codegen v0.1.7/go.mod h1:XaZsQgZ53h6KJuEu3MGGtIN/LlihQ9KgcweEeswDUTI=
-github.com/nicolasbonnici/gorest-status v0.1.7 h1:DYLCEzvcOCAIOSBcZKiBe3tWczT6XTA8R1O6VFd3bSk=
-github.com/nicolasbonnici/gorest-status v0.1.7/go.mod h1:BTVN3jcXaA45qMtgsQtE23XWUuANm4ISsQgiZfEaqRw=
+github.com/nicolasbonnici/gorest-status v0.1.11 h1:xkmjxrEYyaI6CjhgQARovHhsYv/+L9lahVdCC8TjblA=
+github.com/nicolasbonnici/gorest-status v0.1.11/go.mod h1:dWSfGqs+V04KyMn/1PZmwVZ1ilixnvJ3EoMDIEflwfQ=
 github.com/philhofer/fwd v1.2.0 h1:e6DnBTl7vGY+Gz322/ASL4Gyp1FspeMvx1RNDoToZuM=
 github.com/philhofer/fwd v1.2.0/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=

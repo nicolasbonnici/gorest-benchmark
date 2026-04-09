@@ -8,7 +8,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.12
 	github.com/nicolasbonnici/gorest v0.4.13
 	github.com/nicolasbonnici/gorest-auth v0.1.11
-	github.com/nicolasbonnici/gorest-codegen v0.1.7
+	github.com/nicolasbonnici/gorest-codegen v0.1.8
 	github.com/nicolasbonnici/gorest-status v0.1.7
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -45,11 +45,11 @@ require (
 	github.com/tinylib/msgp v1.6.3 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
-	golang.org/x/crypto v0.49.0 // indirect
-	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.70.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect

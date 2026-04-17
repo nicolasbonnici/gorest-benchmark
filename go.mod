@@ -6,7 +6,7 @@ toolchain go1.26.0
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.12
-	github.com/nicolasbonnici/gorest v0.4.14
+	github.com/nicolasbonnici/gorest v0.5.0
 	github.com/nicolasbonnici/gorest-auth v0.1.15
 	github.com/nicolasbonnici/gorest-codegen v0.1.10
 	github.com/nicolasbonnici/gorest-status v0.1.7

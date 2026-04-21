@@ -6,8 +6,8 @@ toolchain go1.26.0
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.12
-	github.com/nicolasbonnici/gorest v0.5.0
-	github.com/nicolasbonnici/gorest-auth v0.1.15
+	github.com/nicolasbonnici/gorest v0.5.1
+	github.com/nicolasbonnici/gorest-auth v0.1.18
 	github.com/nicolasbonnici/gorest-codegen v0.1.11
 	github.com/nicolasbonnici/gorest-status v0.1.7
 	github.com/tsenart/vegeta/v12 v12.13.0
@@ -28,7 +28,7 @@ require (
 	github.com/influxdata/tdigest v0.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.9.1 // indirect
+	github.com/jackc/pgx/v5 v5.9.2 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.5 // indirect
@@ -42,7 +42,7 @@ require (
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529 // indirect
-	github.com/tinylib/msgp v1.6.3 // indirect
+	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.70.0 // indirect
 	golang.org/x/crypto v0.50.0 // indirect
@@ -54,5 +54,5 @@ require (
 	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.48.2 // indirect
+	modernc.org/sqlite v1.49.1 // indirect
 )

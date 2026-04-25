@@ -8,7 +8,7 @@ import (
 	"github.com/nicolasbonnici/gorest/plugin"
 	"github.com/nicolasbonnici/gorest/pluginloader"
 
-	authplugin "github.com/nicolasbonnici/gorest-auth"
+	authplugin "github.com/nicolasbonnici/gorest/auth"
 	statusplugin "github.com/nicolasbonnici/gorest-status"
 )
 

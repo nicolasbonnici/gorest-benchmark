@@ -7,7 +7,7 @@ toolchain go1.26.0
 require (
 	github.com/gofiber/fiber/v2 v2.52.13
 	github.com/nicolasbonnici/gorest v0.5.4
-	github.com/nicolasbonnici/gorest-codegen v0.1.12
+	github.com/nicolasbonnici/gorest-codegen v0.1.13
 	github.com/nicolasbonnici/gorest-status v0.1.7
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -35,7 +35,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.9.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.21 // indirect
+	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mattn/go-runewidth v0.0.23 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect

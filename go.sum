@@ -24,8 +24,8 @@ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJn
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
 github.com/go-playground/validator/v10 v10.30.2 h1:JiFIMtSSHb2/XBUbWM4i/MpeQm9ZK2xqPNk8vgvu5JQ=
 github.com/go-playground/validator/v10 v10.30.2/go.mod h1:mAf2pIOVXjTEBrwUMGKkCWKKPs9NheYGabeB04txQSc=
-github.com/go-sql-driver/mysql v1.9.3 h1:U/N249h2WzJ3Ukj8SowVFjdtZKfu9vlLZxjPXV1aweo=
-github.com/go-sql-driver/mysql v1.9.3/go.mod h1:qn46aNg1333BRMNU69Lq93t8du/dwxI64Gl8i5p1WMU=
+github.com/go-sql-driver/mysql v1.10.0 h1:Q+1LV8DkHJvSYAdR83XzuhDaTykuDx0l6fkXxoWCWfw=
+github.com/go-sql-driver/mysql v1.10.0/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
 github.com/gofiber/fiber/v2 v2.52.13 h1:TOKP64iqC9b5P49VrBW5tHhUOvDyrtJ0xePEfzJbCbk=
 github.com/gofiber/fiber/v2 v2.52.13/go.mod h1:YEcBbO/FB+5M1IZNBP9FO3J9281zgPAreiI1oqg8nDw=
 github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
@@ -69,10 +69,10 @@ github.com/mattn/go-runewidth v0.0.23 h1:7ykA0T0jkPpzSvMS5i9uoNn2Xy3R383f9HDx3Ry
 github.com/mattn/go-runewidth v0.0.23/go.mod h1:XBkDxAl56ILZc9knddidhrOlY5R/pDhgLpndooCuJAs=
 github.com/ncruces/go-strftime v1.0.0 h1:HMFp8mLCTPp341M/ZnA4qaf7ZlsbTc+miZjCLOFAw7w=
 github.com/ncruces/go-strftime v1.0.0/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
-github.com/nicolasbonnici/gorest v0.5.5 h1:Jv30nlpKMkdV9TWaskV8dCukk6FujXg9Ua1/A9rqVD0=
-github.com/nicolasbonnici/gorest v0.5.5/go.mod h1:J9F5PKNBt1XpxDEFLrSfGrRIze7J9JZyyr6XtBVOe8I=
-github.com/nicolasbonnici/gorest-codegen v0.1.14 h1:x6uTPBzErt7smYQdge2TpZTSoyqAQPkPmDLyvlvUPDE=
-github.com/nicolasbonnici/gorest-codegen v0.1.14/go.mod h1:1Yb718xn8T17HkiwWBOKnu4DhVT9uf2WwJ/Kk259PQg=
+github.com/nicolasbonnici/gorest v0.5.6 h1:5tpBhTn98AVOBMTGZh2P70wZ2eTrvDzMMrs4gkgP+Eg=
+github.com/nicolasbonnici/gorest v0.5.6/go.mod h1:RyxdFioBXcknuMULdz1QDsCYxNOy6cz6ha84AvLKY2c=
+github.com/nicolasbonnici/gorest-codegen v0.1.15 h1:otiW8rfaYW6NORRX01heLWiXS9vHmGwAq7+4/fCeOpI=
+github.com/nicolasbonnici/gorest-codegen v0.1.15/go.mod h1:jNuNP25eKBG9fmlXv89kP5EmDEhPaByit24kkZY46w4=
 github.com/nicolasbonnici/gorest-status v0.1.7 h1:DYLCEzvcOCAIOSBcZKiBe3tWczT6XTA8R1O6VFd3bSk=
 github.com/nicolasbonnici/gorest-status v0.1.7/go.mod h1:BTVN3jcXaA45qMtgsQtE23XWUuANm4ISsQgiZfEaqRw=
 github.com/philhofer/fwd v1.2.0 h1:e6DnBTl7vGY+Gz322/ASL4Gyp1FspeMvx1RNDoToZuM=

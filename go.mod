@@ -8,7 +8,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.13
 	github.com/nicolasbonnici/gorest v0.5.11
 	github.com/nicolasbonnici/gorest-codegen v0.1.20
-	github.com/nicolasbonnici/gorest-status v0.1.7
+	github.com/nicolasbonnici/gorest-status v0.1.25
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
 

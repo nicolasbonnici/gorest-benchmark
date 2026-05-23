@@ -6,8 +6,8 @@ toolchain go1.26.0
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.13
-	github.com/nicolasbonnici/gorest v0.5.11
-	github.com/nicolasbonnici/gorest-codegen v0.1.20
+	github.com/nicolasbonnici/gorest v0.5.12
+	github.com/nicolasbonnici/gorest-codegen v0.1.22
 	github.com/nicolasbonnici/gorest-status v0.1.7
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -45,7 +45,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.71.0 // indirect
 	golang.org/x/crypto v0.51.0 // indirect
-	golang.org/x/net v0.54.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/text v0.37.0 // indirect

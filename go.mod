@@ -5,7 +5,7 @@ go 1.26
 toolchain go1.26.3
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.13
+	github.com/gofiber/fiber/v3 v3.3.0
 	github.com/gofiber/fiber/v3 v3.3.0
 	github.com/nicolasbonnici/gorest v0.5.15
 	github.com/nicolasbonnici/gorest-codegen v0.2.0

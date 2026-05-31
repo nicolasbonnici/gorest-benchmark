@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/nicolasbonnici/gorest"
 	"github.com/nicolasbonnici/gorest-benchmark/generated/resources"
 	"github.com/nicolasbonnici/gorest/database"

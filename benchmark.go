@@ -9,7 +9,7 @@ import (
 
 	vegeta "github.com/tsenart/vegeta/v12/lib"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/nicolasbonnici/gorest-codegen/codegen"
 	"github.com/nicolasbonnici/gorest/database"
 	"github.com/nicolasbonnici/gorest/plugin"
@@ -42,7 +42,7 @@ func (p *BenchmarkPlugin) Initialize(cfg map[string]interface{}) error {
 
 // Handler returns a no-op middleware since benchmark is a CLI tool
 func (p *BenchmarkPlugin) Handler() fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		return c.Next()
 	}
 }

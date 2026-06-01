@@ -6,8 +6,8 @@ toolchain go1.26.3
 
 require (
 	github.com/gofiber/fiber/v3 v3.3.0
-	github.com/nicolasbonnici/gorest v0.5.15
-	github.com/nicolasbonnici/gorest-codegen v0.2.1
+	github.com/nicolasbonnici/gorest v0.5.16
+	github.com/nicolasbonnici/gorest-codegen v0.2.2
 	github.com/nicolasbonnici/gorest-status v0.2.0
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
@@ -20,7 +20,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.30.2 // indirect
+	github.com/go-playground/validator/v10 v10.30.3 // indirect
 	github.com/go-sql-driver/mysql v1.10.0 // indirect
 	github.com/gofiber/fiber/v2 v2.52.13 // indirect
 	github.com/gofiber/schema v1.7.1 // indirect
@@ -56,5 +56,5 @@ require (
 	modernc.org/libc v1.72.5 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.50.1 // indirect
+	modernc.org/sqlite v1.51.0 // indirect
 )

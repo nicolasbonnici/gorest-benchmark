@@ -13,19 +13,6 @@ set -e
 echo "🔍 Running pre-commit checks..."
 echo ""
 
-# Run quality audit
-echo "🔬 Running quality audit..."
-if ! make audit; then
-    echo ""
-    echo "❌ Quality audit failed. Please fix the issues before committing."
-    echo "   Run 'make audit' to see detailed quality check results."
-    exit 1
-fi
-
-echo ""
-echo "✅ Quality audit passed"
-echo ""
-
 # Run linting
 echo "📝 Running linter..."
 if ! make lint; then

@@ -13,79 +13,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
           go-version: '1.26.4'
-
-      - name: Download dependencies
-        run: go mod download
-
-      - name: Install quality tools
+      - name: Code audit
         run: |
-          go install honnef.co/go/tools/cmd/staticcheck@latest
-          go install github.com/gordonklaus/ineffassign@latest
-          go install github.com/client9/misspell/cmd/misspell@latest
-          go install github.com/kisielk/errcheck@latest
-          go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
-
-      - name: Run gofmt check
-        run: |
-          echo "Running gofmt -s..."
-          GOFMT_OUTPUT=$(gofmt -s -l . | grep -v '^vendor/' | grep -v 'generated/' || true)
-          if [ -n "$GOFMT_OUTPUT" ]; then
-            echo "The following files need formatting:"
-            echo "$GOFMT_OUTPUT"
-            exit 1
-          fi
-          echo "All files are properly formatted"
-
-      - name: Run go vet
-        run: |
-          echo "Running go vet..."
-          go vet ./...
-
-      - name: Run staticcheck
-        run: |
-          echo "Running staticcheck..."
-          staticcheck ./...
-
-      - name: Run ineffassign
-        run: |
-          echo "Running ineffassign..."
-          ineffassign ./...
-
-      - name: Run misspell
-        run: |
-          echo "Running misspell..."
-          misspell -error .
-
-      - name: Run errcheck
-        run: |
-          echo "Running errcheck..."
-          errcheck -ignoretests ./... 2>&1 || \
-            (echo "⚠️  errcheck failed (known issue with go1.25.1 - will be fixed in CI)" && exit 0)
-
-      - name: Run gocyclo
-        run: |
-          echo "Running gocyclo (threshold: 45)..."
-          output=$(gocyclo -over 45 . | grep -v 'vendor/' | grep -v 'generated/' | grep -v '_test.go' || true)
-          if [ -n "$output" ]; then
-            echo "Functions with cyclomatic complexity over 45:"
-            echo "$output"
-            exit 1
-          fi
-
-      - name: Run golangci-lint
-        run: |
-          echo "Running golangci-lint comprehensive checks..."
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          golangci-lint run
-
-      - name: Cleanup
-        if: always()
-        run: go clean -cache -testcache -modcache
+          golangci-lint run ./...
 
   test:
     name: Test

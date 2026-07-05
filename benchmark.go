@@ -1,10 +1,13 @@
 package benchmark
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
+	"strings"
 	"time"
 
 	vegeta "github.com/tsenart/vegeta/v12/lib"
@@ -86,10 +89,8 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		}
 	}
 
-	fmt.Println("=========================================")
-	fmt.Println("      API Performance Benchmark")
-	fmt.Println("=========================================")
-	fmt.Println()
+	started := time.Now()
+	printHeader()
 
 	// Setup benchmark table
 	if result := c.setupBenchmarkTable(ctx, db); result != nil {
@@ -127,10 +128,10 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	// Cleanup
 	c.cleanup(ctx, db)
 
+	elapsed := time.Since(started).Round(time.Millisecond)
+	fmt.Printf("\n  Completed in %s\n", elapsed)
+	printDivider()
 	fmt.Println()
-	fmt.Println("=========================================")
-	fmt.Println("       Benchmark Complete")
-	fmt.Println("=========================================")
 
 	return &plugin.CommandResult{
 		Success: true,
@@ -294,69 +295,51 @@ func (c *BenchmarkCommand) verifyEndpoint() {
 	attacker := vegeta.NewAttacker()
 	resChan := attacker.Attack(vegeta.NewStaticTargeter(target), vegeta.Rate{Freq: 1, Per: time.Second}, 1*time.Second, "Endpoint Check")
 	if res := <-resChan; res.Code != 200 {
-		fmt.Printf("WARNING: Endpoint check failed with status %d\n", res.Code)
+		fmt.Printf("  WARNING: endpoint check returned HTTP %d\n\n", res.Code)
 		time.Sleep(2 * time.Second)
 	}
-	// Drain the channel
 	for range resChan {
 	}
 }
 
 func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
-	fmt.Println()
-	fmt.Println("=========================================")
-	fmt.Println("       Running Benchmarks")
-	fmt.Println("=========================================")
-	fmt.Println()
-
 	concurrencyLevels := []int{1, 10, 50}
 	testDuration := 5 * time.Second
 
 	for _, limit := range counts {
-		fmt.Printf("Benchmarking GET /benchmarkitems?limit=%d\n", limit)
-		fmt.Println("─────────────────────────────────────────────────────────────────")
+		fmt.Printf("\n  GET /benchmarkitems?limit=%-4d   (%d rows seeded)\n", limit, counts[len(counts)-1])
+		fmt.Printf("  %-12s  %-8s  %-10s  %-10s  %-10s  %s\n",
+			"concurrency", "rps", "p50", "p95", "p99", "success")
+		fmt.Printf("  %s\n", strings.Repeat("─", 62))
 
 		for _, concurrency := range concurrencyLevels {
 			c.runSingleBenchmark(limit, concurrency, testDuration)
 		}
-		fmt.Println()
 	}
 }
 
 func (c *BenchmarkCommand) runSingleBenchmark(limit, concurrency int, testDuration time.Duration) {
 	url := fmt.Sprintf("http://localhost:3001/benchmarkitems?limit=%d", limit)
 
-	target := vegeta.Target{
-		Method: "GET",
-		URL:    url,
-	}
-	targeter := vegeta.NewStaticTargeter(target)
+	target := vegeta.Target{Method: "GET", URL: url}
 	rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
 	attacker := vegeta.NewAttacker()
 
 	var metrics vegeta.Metrics
-	for res := range attacker.Attack(targeter, rate, testDuration, fmt.Sprintf("Load Test (concurrency=%d)", concurrency)) {
+	for res := range attacker.Attack(vegeta.NewStaticTargeter(target), rate, testDuration, "") {
 		metrics.Add(res)
 	}
 	metrics.Close()
 
-	fmt.Printf("  Concurrency: %-3d | ", concurrency)
-	fmt.Printf("RPS: %7.0f | ", metrics.Rate)
-	fmt.Printf("p50: %8s | ", metrics.Latencies.P50)
-	fmt.Printf("p95: %8s | ", metrics.Latencies.P95)
-	fmt.Printf("p99: %8s | ", metrics.Latencies.P99)
-
-	if len(metrics.Errors) > 0 {
-		errorRate := float64(len(metrics.Errors)) / float64(metrics.Requests) * 100
-		fmt.Printf("Errors: %.2f%% ", errorRate)
-		for _, err := range metrics.Errors {
-			fmt.Printf("(%s)", err)
-			break
-		}
-	} else {
-		fmt.Printf("Errors: 0")
-	}
-	fmt.Printf(" | Total: %d\n", metrics.Requests)
+	successPct := metrics.Success * 100
+	fmt.Printf("  %-12d  %-8.0f  %-10s  %-10s  %-10s  %.2f%%\n",
+		concurrency,
+		metrics.Rate,
+		fmtDuration(metrics.Latencies.P50),
+		fmtDuration(metrics.Latencies.P95),
+		fmtDuration(metrics.Latencies.P99),
+		successPct,
+	)
 }
 
 func (c *BenchmarkCommand) cleanup(ctx *plugin.CommandContext, db database.Database) {
@@ -380,4 +363,56 @@ func (c *BenchmarkCommand) cleanup(ctx *plugin.CommandContext, db database.Datab
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	_ = cmd.Run()
+}
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+func printHeader() {
+	printDivider()
+	fmt.Println()
+	fmt.Println("  GoREST API Performance Benchmark")
+	fmt.Println()
+	fmt.Printf("  goos:   %s\n", runtime.GOOS)
+	fmt.Printf("  goarch: %s\n", runtime.GOARCH)
+	fmt.Printf("  cpu:    %s\n", cpuModel())
+	fmt.Printf("  date:   %s\n", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Println()
+	printDivider()
+}
+
+func printDivider() {
+	fmt.Println("  " + strings.Repeat("─", 66))
+}
+
+// fmtDuration rounds to 3 significant digits and picks the right unit.
+func fmtDuration(d time.Duration) string {
+	switch {
+	case d < time.Microsecond:
+		return fmt.Sprintf("%dns", d.Nanoseconds())
+	case d < time.Millisecond:
+		return fmt.Sprintf("%.2fµs", float64(d.Nanoseconds())/1e3)
+	case d < time.Second:
+		return fmt.Sprintf("%.2fms", float64(d.Nanoseconds())/1e6)
+	default:
+		return fmt.Sprintf("%.2fs", d.Seconds())
+	}
+}
+
+// cpuModel reads the CPU brand string from the OS.
+func cpuModel() string {
+	if runtime.GOOS == "linux" {
+		if f, err := os.Open("/proc/cpuinfo"); err == nil {
+			defer f.Close()
+			sc := bufio.NewScanner(f)
+			for sc.Scan() {
+				line := sc.Text()
+				if strings.HasPrefix(line, "model name") {
+					if _, after, ok := strings.Cut(line, ":"); ok {
+						return strings.TrimSpace(after)
+					}
+				}
+			}
+		}
+	}
+	return runtime.GOARCH
 }

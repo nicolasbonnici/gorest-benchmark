@@ -90,7 +90,6 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	}
 
 	started := time.Now()
-	printHeader()
 
 	// Setup benchmark table
 	if result := c.setupBenchmarkTable(ctx, db); result != nil {
@@ -121,6 +120,9 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		return result
 	}
 	c.verifyEndpoint()
+
+	// Print environment info just before results
+	printHeader(started)
 
 	// Run benchmarks
 	c.runBenchmarkTests(counts)
@@ -367,15 +369,18 @@ func (c *BenchmarkCommand) cleanup(ctx *plugin.CommandContext, db database.Datab
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-func printHeader() {
+func printHeader(started time.Time) {
 	printDivider()
 	fmt.Println()
 	fmt.Println("  GoREST API Performance Benchmark")
 	fmt.Println()
-	fmt.Printf("  goos:   %s\n", runtime.GOOS)
-	fmt.Printf("  goarch: %s\n", runtime.GOARCH)
-	fmt.Printf("  cpu:    %s\n", cpuModel())
-	fmt.Printf("  date:   %s\n", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Printf("  goos:      %s\n", runtime.GOOS)
+	fmt.Printf("  goarch:    %s\n", runtime.GOARCH)
+	fmt.Printf("  cpu:       %s\n", cpuModel())
+	memTotal, memAvail := memInfo()
+	fmt.Printf("  ram:       %s total, %s available\n", fmtBytes(memTotal), fmtBytes(memAvail))
+	fmt.Printf("  load avg:  %s\n", loadAvg())
+	fmt.Printf("  date:      %s\n", started.Format("2006-01-02 15:04:05"))
 	fmt.Println()
 	printDivider()
 }
@@ -395,6 +400,58 @@ func fmtDuration(d time.Duration) string {
 		return fmt.Sprintf("%.2fms", float64(d.Nanoseconds())/1e6)
 	default:
 		return fmt.Sprintf("%.2fs", d.Seconds())
+	}
+}
+
+// memInfo returns total and available RAM in bytes from /proc/meminfo.
+func memInfo() (total, avail uint64) {
+	f, err := os.Open("/proc/meminfo")
+	if err != nil {
+		return 0, 0
+	}
+	defer f.Close()
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		line := sc.Text()
+		var kb uint64
+		if strings.HasPrefix(line, "MemTotal:") {
+			if _, err := fmt.Sscanf(strings.TrimPrefix(line, "MemTotal:"), "%d", &kb); err == nil {
+				total = kb * 1024
+			}
+		} else if strings.HasPrefix(line, "MemAvailable:") {
+			if _, err := fmt.Sscanf(strings.TrimPrefix(line, "MemAvailable:"), "%d", &kb); err == nil {
+				avail = kb * 1024
+			}
+		}
+		if total > 0 && avail > 0 {
+			break
+		}
+	}
+	return total, avail
+}
+
+// loadAvg returns the 1/5/15-minute load averages from /proc/loadavg.
+func loadAvg() string {
+	data, err := os.ReadFile("/proc/loadavg")
+	if err != nil {
+		return "n/a"
+	}
+	fields := strings.Fields(string(data))
+	if len(fields) < 3 {
+		return "n/a"
+	}
+	return fmt.Sprintf("%s  %s  %s  (1m  5m  15m)", fields[0], fields[1], fields[2])
+}
+
+// fmtBytes formats a byte count as GiB or MiB.
+func fmtBytes(b uint64) string {
+	switch {
+	case b >= 1<<30:
+		return fmt.Sprintf("%.1f GiB", float64(b)/(1<<30))
+	case b >= 1<<20:
+		return fmt.Sprintf("%.0f MiB", float64(b)/(1<<20))
+	default:
+		return fmt.Sprintf("%d B", b)
 	}
 }
 

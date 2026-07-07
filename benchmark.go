@@ -332,16 +332,16 @@ func benchmarkURL(s queryScenario, limit int) string {
 }
 
 func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
-	concurrencyLevels := []int{1, 10, 50}
+	concurrencyLevels := []int{1, 10, 50, 100, 200}
 	testDuration := 5 * time.Second
 	seeded := counts[len(counts)-1]
 
 	for _, scenario := range benchmarkScenarios() {
 		for _, limit := range counts {
 			fmt.Printf("\n  GET /benchmarkitems  [%s]  limit=%-4d   (%d rows seeded)\n", scenario.label, limit, seeded)
-			fmt.Printf("  %-12s  %-8s  %-10s  %-10s  %-10s  %s\n",
-				"concurrency", "rps", "p50", "p95", "p99", "success")
-			fmt.Printf("  %s\n", strings.Repeat("─", 62))
+			fmt.Printf("  %-12s  %-10s  %-10s  %-10s  %-10s  %-10s  %s\n",
+				"concurrency", "rps", "p50", "p95", "p99", "requests", "success")
+			fmt.Printf("  %s\n", strings.Repeat("─", 78))
 
 			url := benchmarkURL(scenario, limit)
 			for _, concurrency := range concurrencyLevels {
@@ -351,10 +351,18 @@ func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
 	}
 }
 
+// runSingleBenchmark drives the endpoint closed-loop: `concurrency` workers each
+// issue the next request as soon as the previous returns (unlimited rate), so the
+// server is actually saturated and metrics.Rate reports the *measured* throughput
+// — not a preset request rate. This is what makes a real improvement visible.
 func (c *BenchmarkCommand) runSingleBenchmark(url string, concurrency int, testDuration time.Duration) {
 	target := vegeta.Target{Method: "GET", URL: url}
-	rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
-	attacker := vegeta.NewAttacker()
+	// Freq 0 = send as fast as the bounded worker pool allows.
+	rate := vegeta.Rate{Freq: 0}
+	attacker := vegeta.NewAttacker(
+		vegeta.Workers(uint64(concurrency)),
+		vegeta.MaxWorkers(uint64(concurrency)),
+	)
 
 	var metrics vegeta.Metrics
 	for res := range attacker.Attack(vegeta.NewStaticTargeter(target), rate, testDuration, "") {
@@ -363,12 +371,13 @@ func (c *BenchmarkCommand) runSingleBenchmark(url string, concurrency int, testD
 	metrics.Close()
 
 	successPct := metrics.Success * 100
-	fmt.Printf("  %-12d  %-8.0f  %-10s  %-10s  %-10s  %.2f%%\n",
+	fmt.Printf("  %-12d  %-10.0f  %-10s  %-10s  %-10s  %-10d  %.2f%%\n",
 		concurrency,
 		metrics.Rate,
 		fmtDuration(metrics.Latencies.P50),
 		fmtDuration(metrics.Latencies.P95),
 		fmtDuration(metrics.Latencies.P99),
+		metrics.Requests,
 		successPct,
 	)
 }

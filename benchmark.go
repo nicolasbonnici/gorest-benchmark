@@ -292,7 +292,7 @@ func (c *BenchmarkCommand) waitForServerReady(ctx *plugin.CommandContext) *plugi
 func (c *BenchmarkCommand) verifyEndpoint() {
 	target := vegeta.Target{
 		Method: "GET",
-		URL:    "http://localhost:3001/benchmarkitems?limit=1",
+		URL:    benchmarkBaseURL + "/benchmarkitems?limit=1",
 	}
 	attacker := vegeta.NewAttacker()
 	resChan := attacker.Attack(vegeta.NewStaticTargeter(target), vegeta.Rate{Freq: 1, Per: time.Second}, 1*time.Second, "Endpoint Check")
@@ -304,25 +304,54 @@ func (c *BenchmarkCommand) verifyEndpoint() {
 	}
 }
 
+const benchmarkBaseURL = "http://localhost:3001"
+
+// queryScenario isolates a distinct query shape the list endpoint executes for
+// a given page size. Splitting them lets the v0.6 query-path work in the other
+// plugins be attributed rather than averaged together: "list" fetches and
+// serialises rows only (count=false), while "list+count" adds the pagination
+// COUNT(*) that GoREST runs as a separate second query.
+type queryScenario struct {
+	label string
+	query func(limit int) string
+}
+
+func benchmarkScenarios() []queryScenario {
+	return []queryScenario{
+		{label: "list", query: func(limit int) string {
+			return fmt.Sprintf("limit=%d&count=false", limit)
+		}},
+		{label: "list+count", query: func(limit int) string {
+			return fmt.Sprintf("limit=%d", limit)
+		}},
+	}
+}
+
+func benchmarkURL(s queryScenario, limit int) string {
+	return benchmarkBaseURL + "/benchmarkitems?" + s.query(limit)
+}
+
 func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
 	concurrencyLevels := []int{1, 10, 50}
 	testDuration := 5 * time.Second
+	seeded := counts[len(counts)-1]
 
-	for _, limit := range counts {
-		fmt.Printf("\n  GET /benchmarkitems?limit=%-4d   (%d rows seeded)\n", limit, counts[len(counts)-1])
-		fmt.Printf("  %-12s  %-8s  %-10s  %-10s  %-10s  %s\n",
-			"concurrency", "rps", "p50", "p95", "p99", "success")
-		fmt.Printf("  %s\n", strings.Repeat("─", 62))
+	for _, scenario := range benchmarkScenarios() {
+		for _, limit := range counts {
+			fmt.Printf("\n  GET /benchmarkitems  [%s]  limit=%-4d   (%d rows seeded)\n", scenario.label, limit, seeded)
+			fmt.Printf("  %-12s  %-8s  %-10s  %-10s  %-10s  %s\n",
+				"concurrency", "rps", "p50", "p95", "p99", "success")
+			fmt.Printf("  %s\n", strings.Repeat("─", 62))
 
-		for _, concurrency := range concurrencyLevels {
-			c.runSingleBenchmark(limit, concurrency, testDuration)
+			url := benchmarkURL(scenario, limit)
+			for _, concurrency := range concurrencyLevels {
+				c.runSingleBenchmark(url, concurrency, testDuration)
+			}
 		}
 	}
 }
 
-func (c *BenchmarkCommand) runSingleBenchmark(limit, concurrency int, testDuration time.Duration) {
-	url := fmt.Sprintf("http://localhost:3001/benchmarkitems?limit=%d", limit)
-
+func (c *BenchmarkCommand) runSingleBenchmark(url string, concurrency int, testDuration time.Duration) {
 	target := vegeta.Target{Method: "GET", URL: url}
 	rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
 	attacker := vegeta.NewAttacker()

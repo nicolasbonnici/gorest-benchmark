@@ -73,10 +73,10 @@ github.com/ncruces/go-strftime v1.0.0 h1:HMFp8mLCTPp341M/ZnA4qaf7ZlsbTc+miZjCLOF
 github.com/ncruces/go-strftime v1.0.0/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
 github.com/nicolasbonnici/gorest v0.6.4 h1:kNruhQvjaLytVZL1q5hrxjGlDB9YYXTeStiDrQgw+WM=
 github.com/nicolasbonnici/gorest v0.6.4/go.mod h1:5HNpWbhBF4koWEeCDGiIDYMBK/N1y6sRPTOdS1GJcaw=
-github.com/nicolasbonnici/gorest-codegen v0.6.3 h1:d6DubcpbszwTaObvEzv9/9Iw0kkOiabSLtJPJt3nvng=
-github.com/nicolasbonnici/gorest-codegen v0.6.3/go.mod h1:RvLzQpXZG1HSqaE/2Os19tcwv8vOOreaJXYNbUh4+mQ=
-github.com/nicolasbonnici/gorest-status v0.6.3 h1:MFBOwjc+cmwyKsfae+gOZOUHN+qr4MvLlAAikmTS8DY=
-github.com/nicolasbonnici/gorest-status v0.6.3/go.mod h1:viDySydiYs3gfi2DJXNHHWSahLRPHXnyVlA2ArTsdYc=
+github.com/nicolasbonnici/gorest-codegen v0.6.4 h1:0RCS2KFWjVJFXNVUC13rEe0GviU6osOduFVesEsPcmA=
+github.com/nicolasbonnici/gorest-codegen v0.6.4/go.mod h1:uQ5islOPp2ccyySnOEwQGFO2ZqUCx/jWL+1FhYr11U4=
+github.com/nicolasbonnici/gorest-status v0.6.4 h1:huJOY0HMn4C8ceKLzrzIs56Km35JB3h3QpGDqpqaaWg=
+github.com/nicolasbonnici/gorest-status v0.6.4/go.mod h1:i+UQgMeKz8SoKoagjTqxfHCUTmom7+DNqfbli6AMT4E=
 github.com/philhofer/fwd v1.2.0 h1:e6DnBTl7vGY+Gz322/ASL4Gyp1FspeMvx1RNDoToZuM=
 github.com/philhofer/fwd v1.2.0/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=

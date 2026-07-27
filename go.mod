@@ -7,8 +7,8 @@ toolchain go1.26.5
 require (
 	github.com/gofiber/fiber/v3 v3.4.0
 	github.com/nicolasbonnici/gorest v0.6.5
-	github.com/nicolasbonnici/gorest-codegen v0.6.5
-	github.com/nicolasbonnici/gorest-status v0.6.5
+	github.com/nicolasbonnici/gorest-codegen v0.6.6
+	github.com/nicolasbonnici/gorest-status v0.6.6
 	github.com/tsenart/vegeta/v12 v12.13.0
 )
 

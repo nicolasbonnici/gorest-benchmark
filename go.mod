@@ -6,7 +6,7 @@ toolchain go1.26.5
 
 require (
 	github.com/gofiber/fiber/v3 v3.4.0
-	github.com/nicolasbonnici/gorest v0.6.5
+	github.com/nicolasbonnici/gorest v0.6.6
 	github.com/nicolasbonnici/gorest-codegen v0.6.7
 	github.com/nicolasbonnici/gorest-status v0.6.7
 	github.com/tsenart/vegeta/v12 v12.13.0
@@ -22,7 +22,7 @@ require (
 	github.com/go-playground/validator/v10 v10.30.3 // indirect
 	github.com/go-sql-driver/mysql v1.10.0 // indirect
 	github.com/gofiber/schema v1.8.3 // indirect
-	github.com/gofiber/utils/v2 v2.4.0 // indirect
+	github.com/gofiber/utils/v2 v2.4.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/influxdata/tdigest v0.0.1 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.72.0 // indirect
+	github.com/valyala/fasthttp v1.73.0 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect

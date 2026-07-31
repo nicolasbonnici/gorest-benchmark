@@ -5,6 +5,8 @@ GOPATH ?= $(shell go env GOPATH)
 export PATH := $(GOPATH)/bin:$(PATH)
 
 # Default target
+GOLANGCI_LINT_VERSION := v2.12.2
+
 .DEFAULT_GOAL := help
 
 help: ## Show this help message
@@ -20,24 +22,10 @@ install: ## Install dependencies, dev tools, and git hooks
 	@echo "✓ Dependencies installed"
 	@echo ""
 	@echo "[2/3] Installing development tools..."
-	@command -v golangci-lint >/dev/null 2>&1 || \
-		(echo "  Installing golangci-lint..." && \
-		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest)
-	@command -v staticcheck >/dev/null 2>&1 || \
-		(echo "  Installing staticcheck..." && \
-		go install honnef.co/go/tools/cmd/staticcheck@latest)
-	@command -v ineffassign >/dev/null 2>&1 || \
-		(echo "  Installing ineffassign..." && \
-		go install github.com/gordonklaus/ineffassign@latest)
-	@command -v misspell >/dev/null 2>&1 || \
-		(echo "  Installing misspell..." && \
-		go install github.com/client9/misspell/cmd/misspell@latest)
-	@command -v errcheck >/dev/null 2>&1 || \
-		(echo "  Installing errcheck..." && \
-		go install github.com/kisielk/errcheck@latest)
-	@command -v gocyclo >/dev/null 2>&1 || \
-		(echo "  Installing gocyclo..." && \
-		go install github.com/fzipp/gocyclo/cmd/gocyclo@latest)
+	@if ! golangci-lint --version 2>/dev/null | grep -qE 'version v?2\.'; then \
+		echo "  Installing golangci-lint $(GOLANGCI_LINT_VERSION)..."; \
+		GOWORK=off go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION); \
+	fi
 	@echo "✓ Development tools installed"
 	@echo ""
 	@echo "[3/3] Installing git hooks..."
@@ -53,7 +41,7 @@ test: ## Run tests
 	@echo "Running tests..."
 	@go test -v ./...
 
-lint: ## Run all quality checks (gofmt, vet, staticcheck, misspell, gocyclo, errcheck)
+lint: ## Run golangci-lint (bundles staticcheck, errcheck, govet, gocyclo, misspell)
 	@echo "Running golangci-lint..."
 	@$$(go env GOPATH)/bin/golangci-lint run ./...
 

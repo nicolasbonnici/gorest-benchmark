@@ -9,12 +9,10 @@ import (
 	"github.com/nicolasbonnici/gorest/pluginloader"
 
 	statusplugin "github.com/nicolasbonnici/gorest-status"
-	authplugin "github.com/nicolasbonnici/gorest/auth"
 )
 
 func init() {
 	pluginloader.RegisterPluginFactory("status", statusplugin.NewPlugin)
-	pluginloader.RegisterPluginFactory("auth", authplugin.NewPlugin)
 }
 
 func main() {

@@ -20,7 +20,7 @@ env:
 
 jobs:
   quality:
-    name: Code Quality
+    name: Quality Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

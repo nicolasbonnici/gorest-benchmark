@@ -304,28 +304,70 @@ func (c *BenchmarkCommand) verifyEndpoint() {
 	}
 }
 
+const benchmarkBaseURL = "http://localhost:3001"
+
+// queryScenario isolates a distinct query shape the list endpoint executes for
+// a given page size. Splitting them lets the v0.6 query-path work in the other
+// plugins be attributed rather than averaged together: "list" fetches and
+// serialises rows only (count=false), while "list+count" adds the pagination
+// COUNT(*) that GoREST runs as a separate second query.
+type queryScenario struct {
+	label string
+	query func(limit int) string
+}
+
+func benchmarkScenarios() []queryScenario {
+	return []queryScenario{
+		{label: "list", query: func(limit int) string {
+			return fmt.Sprintf("limit=%d&count=false", limit)
+		}},
+		{label: "list+count", query: func(limit int) string {
+			return fmt.Sprintf("limit=%d", limit)
+		}},
+	}
+}
+
+func benchmarkURL(s queryScenario, limit int) string {
+	return benchmarkBaseURL + "/benchmarkitems?" + s.query(limit)
+}
+
 func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
-	concurrencyLevels := []int{1, 10, 50}
+	concurrencyLevels := []int{1, 10, 50, 100, 200}
 	testDuration := 5 * time.Second
+	seeded := counts[len(counts)-1]
 
-	for _, limit := range counts {
-		fmt.Printf("\n  GET /benchmarkitems?limit=%-4d   (%d rows seeded)\n", limit, counts[len(counts)-1])
-		fmt.Printf("  %-12s  %-8s  %-10s  %-10s  %-10s  %s\n",
-			"concurrency", "rps", "p50", "p95", "p99", "success")
-		fmt.Printf("  %s\n", strings.Repeat("─", 62))
+	for _, scenario := range benchmarkScenarios() {
+		for _, limit := range counts {
+			fmt.Printf("\n  GET /benchmarkitems  [%s]  limit=%-4d   (%d rows seeded)\n", scenario.label, limit, seeded)
+			fmt.Printf("  %-12s  %-10s  %-10s  %-10s  %-10s  %-10s  %s\n",
+				"concurrency", "rps", "p50", "p95", "p99", "requests", "success")
+			fmt.Printf("  %s\n", strings.Repeat("─", 78))
 
-		for _, concurrency := range concurrencyLevels {
-			c.runSingleBenchmark(limit, concurrency, testDuration)
+			url := benchmarkURL(scenario, limit)
+			for _, concurrency := range concurrencyLevels {
+				c.runSingleBenchmark(url, concurrency, testDuration)
+			}
 		}
 	}
 }
 
-func (c *BenchmarkCommand) runSingleBenchmark(limit, concurrency int, testDuration time.Duration) {
-	url := fmt.Sprintf("http://localhost:3001/benchmarkitems?limit=%d", limit)
-
+// runSingleBenchmark drives the endpoint closed-loop: `concurrency` workers each
+// issue the next request as soon as the previous returns (unlimited rate), so the
+// server is actually saturated and metrics.Rate reports the *measured* throughput,
+// not a preset request rate. This is what makes a real improvement visible.
+//
+// Backported from the v0.6 line so that a v0.5 baseline and a v0.6 candidate are
+// measured the same way; comparing this against the open-loop Rate{Freq:
+// concurrency} this function used through v0.2.12 would compare an offered rate
+// with an achieved one.
+func (c *BenchmarkCommand) runSingleBenchmark(url string, concurrency int, testDuration time.Duration) {
 	target := vegeta.Target{Method: "GET", URL: url}
-	rate := vegeta.Rate{Freq: concurrency, Per: time.Second}
-	attacker := vegeta.NewAttacker()
+	// Freq 0 = send as fast as the bounded worker pool allows.
+	rate := vegeta.Rate{Freq: 0}
+	attacker := vegeta.NewAttacker(
+		vegeta.Workers(uint64(concurrency)),
+		vegeta.MaxWorkers(uint64(concurrency)),
+	)
 
 	var metrics vegeta.Metrics
 	for res := range attacker.Attack(vegeta.NewStaticTargeter(target), rate, testDuration, "") {
@@ -334,12 +376,13 @@ func (c *BenchmarkCommand) runSingleBenchmark(limit, concurrency int, testDurati
 	metrics.Close()
 
 	successPct := metrics.Success * 100
-	fmt.Printf("  %-12d  %-8.0f  %-10s  %-10s  %-10s  %.2f%%\n",
+	fmt.Printf("  %-12d  %-10.0f  %-10s  %-10s  %-10s  %-10d  %.2f%%\n",
 		concurrency,
 		metrics.Rate,
 		fmtDuration(metrics.Latencies.P50),
 		fmtDuration(metrics.Latencies.P95),
 		fmtDuration(metrics.Latencies.P99),
+		metrics.Requests,
 		successPct,
 	)
 }

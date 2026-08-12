@@ -89,6 +89,17 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 		}
 	}
 
+	// Read before any setup work: a typo in BENCH_RATES should fail in the first
+	// second, not after the seeding and codegen that precede the first request.
+	loadCfg, err := loadConfigFromEnv()
+	if err != nil {
+		return &plugin.CommandResult{
+			Success: false,
+			Error:   err,
+			Message: "Invalid benchmark load configuration",
+		}
+	}
+
 	started := time.Now()
 
 	// Setup benchmark table
@@ -125,7 +136,7 @@ func (c *BenchmarkCommand) Run(ctx *plugin.CommandContext) *plugin.CommandResult
 	printHeader(started)
 
 	// Run benchmarks
-	c.runBenchmarkTests(counts)
+	c.runBenchmarkTests(counts, loadCfg)
 
 	// Cleanup
 	c.cleanup(ctx, db)
@@ -331,55 +342,141 @@ func benchmarkURL(s queryScenario, limit int) string {
 	return benchmarkBaseURL + "/benchmarkitems?" + s.query(limit)
 }
 
-func (c *BenchmarkCommand) runBenchmarkTests(counts []int) {
-	concurrencyLevels := []int{1, 10, 50, 100, 200}
-	testDuration := 5 * time.Second
+func (c *BenchmarkCommand) runBenchmarkTests(counts []int, cfg loadConfig) {
 	seeded := counts[len(counts)-1]
 
 	for _, scenario := range benchmarkScenarios() {
 		for _, limit := range counts {
 			fmt.Printf("\n  GET /benchmarkitems  [%s]  limit=%-4d   (%d rows seeded)\n", scenario.label, limit, seeded)
-			fmt.Printf("  %-12s  %-10s  %-10s  %-10s  %-10s  %-10s  %s\n",
-				"concurrency", "rps", "p50", "p95", "p99", "requests", "success")
-			fmt.Printf("  %s\n", strings.Repeat("─", 78))
 
 			url := benchmarkURL(scenario, limit)
-			for _, concurrency := range concurrencyLevels {
-				c.runSingleBenchmark(url, concurrency, testDuration)
+			key := cellKey(scenario.label, limit)
+
+			capacity := c.runCapacitySweep(url, cfg)
+
+			// A pinned ladder is what makes an A/B comparable: the candidate has
+			// to answer the same arrival process as the baseline, not one scaled
+			// to its own capacity, or every row compares two different questions.
+			rates, pinned := cfg.pinned[key]
+			if !pinned {
+				rates = ladderFor(capacity)
 			}
+			c.runRateLadder(url, key, rates, pinned, cfg)
 		}
 	}
 }
 
-// runSingleBenchmark drives the endpoint closed-loop: `concurrency` workers each
+// runCapacitySweep drives the endpoint closed-loop: `concurrency` workers each
 // issue the next request as soon as the previous returns (unlimited rate), so the
 // server is actually saturated and metrics.Rate reports the *measured* throughput
-// — not a preset request rate. This is what makes a real improvement visible.
-func (c *BenchmarkCommand) runSingleBenchmark(url string, concurrency int, testDuration time.Duration) {
-	target := vegeta.Target{Method: "GET", URL: url}
-	// Freq 0 = send as fast as the bounded worker pool allows.
-	rate := vegeta.Rate{Freq: 0}
-	attacker := vegeta.NewAttacker(
-		vegeta.Workers(uint64(concurrency)),
-		vegeta.MaxWorkers(uint64(concurrency)),
-	)
+// rather than a preset request rate. Peak throughput across the sweep is both the
+// capacity number worth diffing and the scale the open-loop ladder is built on.
+//
+// The latency columns here are for reading, not for diffing: see the note at the
+// top of loadgen.go.
+func (c *BenchmarkCommand) runCapacitySweep(url string, cfg loadConfig) float64 {
+	fmt.Printf("\n  capacity (closed-loop, %s per level)\n", cfg.capacityDuration)
+	fmt.Printf("  %-12s  %-10s  %-10s  %-10s  %-10s  %-10s  %s\n",
+		"concurrency", "rps", "p50", "p95", "p99", "requests", "success")
+	fmt.Printf("  %s\n", strings.Repeat("─", 78))
 
-	var metrics vegeta.Metrics
-	for res := range attacker.Attack(vegeta.NewStaticTargeter(target), rate, testDuration, "") {
-		metrics.Add(res)
+	var capacity float64
+	var peakAt int
+	for _, concurrency := range cfg.concurrencyLevels {
+		target := vegeta.Target{Method: "GET", URL: url}
+		// Freq 0 = send as fast as the bounded worker pool allows.
+		attacker := vegeta.NewAttacker(
+			vegeta.Workers(uint64(concurrency)),
+			vegeta.MaxWorkers(uint64(concurrency)),
+			vegeta.Timeout(cfg.requestTimeout),
+		)
+
+		var metrics vegeta.Metrics
+		for res := range attacker.Attack(vegeta.NewStaticTargeter(target), vegeta.Rate{Freq: 0}, cfg.capacityDuration, "") {
+			metrics.Add(res)
+		}
+		metrics.Close()
+
+		fmt.Printf("  %-12d  %-10.0f  %-10s  %-10s  %-10s  %-10d  %.2f%%\n",
+			concurrency,
+			metrics.Rate,
+			fmtDuration(metrics.Latencies.P50),
+			fmtDuration(metrics.Latencies.P95),
+			fmtDuration(metrics.Latencies.P99),
+			metrics.Requests,
+			metrics.Success*100,
+		)
+
+		if metrics.Rate > capacity {
+			capacity = metrics.Rate
+			peakAt = concurrency
+		}
 	}
-	metrics.Close()
 
-	successPct := metrics.Success * 100
-	fmt.Printf("  %-12d  %-10.0f  %-10s  %-10s  %-10s  %-10d  %.2f%%\n",
-		concurrency,
-		metrics.Rate,
-		fmtDuration(metrics.Latencies.P50),
-		fmtDuration(metrics.Latencies.P95),
-		fmtDuration(metrics.Latencies.P99),
-		metrics.Requests,
-		successPct,
-	)
+	fmt.Printf("  capacity %.0f rps at concurrency %d\n", capacity, peakAt)
+	return capacity
+}
+
+// runRateLadder drives the endpoint open-loop: requests leave on a fixed
+// schedule and workers are spawned as needed to hold it, so a slow response
+// delays no subsequent request. Latency measured this way is a property of the
+// build at a stated offered load, which is what makes it comparable across an
+// A/B; see the note at the top of loadgen.go.
+func (c *BenchmarkCommand) runRateLadder(url, key string, rates []int, pinned bool, cfg loadConfig) {
+	origin := "ladder from measured capacity"
+	if pinned {
+		origin = "ladder pinned via BENCH_RATES"
+	}
+	fmt.Printf("\n  latency at fixed rate (open-loop, %s)\n", origin)
+	fmt.Printf("  %-12s  %-10s  %-10s  %-10s  %-10s  %-10s  %-10s  %s\n",
+		"rate", "achieved", "p50", "p95", "p99", "requests", "success", "")
+	fmt.Printf("  %s\n", strings.Repeat("─", 78))
+
+	for _, rate := range rates {
+		duration := durationFor(rate, cfg.rateDuration, cfg.maxRateDuration, minSamples)
+		target := vegeta.Target{Method: "GET", URL: url}
+		attacker := vegeta.NewAttacker(
+			vegeta.MaxWorkers(maxWorkersFor(rate, cfg.requestTimeout)),
+			vegeta.Timeout(cfg.requestTimeout),
+		)
+
+		// Split by arrival time as well as aggregating: comparing the two halves
+		// is what exposes a queue that was still growing when the rung ended,
+		// which the aggregate numbers hide completely.
+		var metrics, firstHalf, secondHalf vegeta.Metrics
+		pacer := vegeta.Rate{Freq: rate, Per: time.Second}
+		results := attacker.Attack(vegeta.NewStaticTargeter(target), pacer, duration, "")
+
+		var midpoint time.Time
+		for res := range results {
+			if midpoint.IsZero() {
+				midpoint = res.Timestamp.Add(duration / 2)
+			}
+			metrics.Add(res)
+			if res.Timestamp.Before(midpoint) {
+				firstHalf.Add(res)
+			} else {
+				secondHalf.Add(res)
+			}
+		}
+		metrics.Close()
+		firstHalf.Close()
+		secondHalf.Close()
+
+		flag := ""
+		if saturated(rate, metrics.Rate, metrics.Success) ||
+			latencyDrifting(firstHalf.Latencies.P50, secondHalf.Latencies.P50,
+				firstHalf.Requests, secondHalf.Requests) {
+			flag = "SATURATED"
+		}
+		fmt.Println(formatRateRow(rate, metrics.Rate,
+			metrics.Latencies.P50, metrics.Latencies.P95, metrics.Latencies.P99,
+			metrics.Requests, metrics.Success, flag))
+	}
+
+	// Emitted in the env format on purpose: scripts/bench-ab.sh scrapes these
+	// lines off the baseline transcript and hands them to the candidate half.
+	fmt.Printf("  BENCH_RATES %s\n", formatPinnedRates(key, rates))
 }
 
 func (c *BenchmarkCommand) cleanup(ctx *plugin.CommandContext, db database.Database) {

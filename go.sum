@@ -73,8 +73,8 @@ github.com/nicolasbonnici/gorest v0.6.15 h1:pG2QnI+bm0tKxfvBENdvNQ4M/eSoiyq8e9oo
 github.com/nicolasbonnici/gorest v0.6.15/go.mod h1:iu0UC3yYSgb2iBkDFnf+M61Qh5S+7LmQoqK5lwxeOe8=
 github.com/nicolasbonnici/gorest-codegen v0.6.16 h1:F3aWkCxVnEUixOi9B1kBtrDjilOR5yLVvOptFWicbJY=
 github.com/nicolasbonnici/gorest-codegen v0.6.16/go.mod h1:cxVNCRkkc1WTqCljQGGG8Hv/aWudW3etPoc0pcBxbWg=
-github.com/nicolasbonnici/gorest-status v0.6.15 h1:riB/qOB/J7e81ghHbx5dH1TlYI6MsD9PiTiHtM3qPfs=
-github.com/nicolasbonnici/gorest-status v0.6.15/go.mod h1:XBlePYTL16BoTYLKUvxr2QBeMfmxNNWgfQDB1pFzpmo=
+github.com/nicolasbonnici/gorest-status v0.6.16 h1:e4N1r32f5L220Z4W7ptb4zmc/kZGf/0c1+iOnTPCVyU=
+github.com/nicolasbonnici/gorest-status v0.6.16/go.mod h1:XBlePYTL16BoTYLKUvxr2QBeMfmxNNWgfQDB1pFzpmo=
 github.com/philhofer/fwd v1.2.0 h1:e6DnBTl7vGY+Gz322/ASL4Gyp1FspeMvx1RNDoToZuM=
 github.com/philhofer/fwd v1.2.0/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=

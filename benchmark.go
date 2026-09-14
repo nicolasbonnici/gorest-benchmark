@@ -383,11 +383,14 @@ func (c *BenchmarkCommand) runCapacitySweep(url string, cfg loadConfig) float64 
 	var capacity float64
 	var peakAt int
 	for _, concurrency := range cfg.concurrencyLevels {
+		if concurrency <= 0 {
+			continue
+		}
 		target := vegeta.Target{Method: "GET", URL: url}
 		// Freq 0 = send as fast as the bounded worker pool allows.
 		attacker := vegeta.NewAttacker(
-			vegeta.Workers(uint64(concurrency)),
-			vegeta.MaxWorkers(uint64(concurrency)),
+			vegeta.Workers(uint64(concurrency)),    // #nosec G115 -- guarded positive above
+			vegeta.MaxWorkers(uint64(concurrency)), // #nosec G115 -- guarded positive above
 			vegeta.Timeout(cfg.requestTimeout),
 		)
 

@@ -2,7 +2,7 @@ module github.com/nicolasbonnici/gorest-benchmark
 
 go 1.26.0
 
-toolchain go1.26.6
+toolchain go1.26.9
 
 require (
 	github.com/gofiber/fiber/v3 v3.5.0

@@ -69,8 +69,8 @@ github.com/molecule-man/go-brrr v1.2.0 h1:dOJU45BC3Gc2WXoxAW0rgCAgVuu2gruAOGncfi
 github.com/molecule-man/go-brrr v1.2.0/go.mod h1:7ybW6/7gA3oKY45jOfVNjSJDtrr6ea4tzbsTkjmQDC4=
 github.com/ncruces/go-strftime v1.1.0 h1:vtPmPWMkb539RGV9WpWT9EwJGvrOCKvMNI4obWL47Hk=
 github.com/ncruces/go-strftime v1.1.0/go.mod h1:yVaq7iwCN09vHRrKBrrflXT0M9tTMG2KmZ9Fj7xeG/g=
-github.com/nicolasbonnici/gorest v0.7.2 h1:SsgSOH2HKan92KmWwM5tCLpwfhp8+1j/9aWJvqwQqEE=
-github.com/nicolasbonnici/gorest v0.7.2/go.mod h1:LWBad627fugSi4cbEq/Ok731kfGkguKEowETyuI5GjM=
+github.com/nicolasbonnici/gorest v0.7.3 h1:Uw5jarnZ+tIstK8hE5zSOduR4KzMWxZXmqkMJEKoxpE=
+github.com/nicolasbonnici/gorest v0.7.3/go.mod h1:LYfRYRy/ItEhdJJ6DvjL8IcpEH04IH9RTTVk63yhjUQ=
 github.com/nicolasbonnici/gorest-codegen v0.7.2 h1:rWKLLfrtKTOdMEfH92xXSzdX0oXWRRSuBY4sv/O1EqM=
 github.com/nicolasbonnici/gorest-codegen v0.7.2/go.mod h1:GId6fb+ct5MzA8wKGaXdVeTl/QrovNpNYekuOMRfet8=
 github.com/nicolasbonnici/gorest-status v0.7.2 h1:JjOFORsLt3wbSeXKXVyr+YqDfDJhMYI5/vWyIYJzhcU=

@@ -75,8 +75,8 @@ github.com/nicolasbonnici/gorest-codegen v0.7.3 h1:G+LWC4Jp4h89eNOuDSReO2yA6PXkH
 github.com/nicolasbonnici/gorest-codegen v0.7.3/go.mod h1:XRI1A5Rvc0RNopA23hGAoxYajryNYGc1oxZam9VkxOc=
 github.com/nicolasbonnici/gorest-status v0.7.3 h1:qLPIGsKKFSpyi/nchsAo3JPnpicJPa3vIxklOJWQHjM=
 github.com/nicolasbonnici/gorest-status v0.7.3/go.mod h1:ImhKQLPaC4TPac7LbDicPU68ms4+YrekStPi2aPl+JQ=
-github.com/philhofer/fwd v1.2.0 h1:e6DnBTl7vGY+Gz322/ASL4Gyp1FspeMvx1RNDoToZuM=
-github.com/philhofer/fwd v1.2.0/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
+github.com/philhofer/fwd v1.2.1 h1:UtpS73q8bFgy/yH3gCq8LSNvj5gv/FowNOiWZa7uKwQ=
+github.com/philhofer/fwd v1.2.1/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
